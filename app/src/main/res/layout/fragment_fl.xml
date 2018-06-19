@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="料号:"
+            android:textSize="20sp"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="品名:"
+            android:textSize="20sp"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="应发:"
+            android:textSize="18sp"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:text="已发:"
+            android:textSize="18sp"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:textSize="18sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="差异:"
+            android:textSize="20sp"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="扫描发料:"
+            android:textSize="20sp"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="建议批次列表:"
+            android:textSize="20sp"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="80dp"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:text="总计:"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/sv_tjpc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <ListView
+            android:id="@+id/lv_tjpc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </ListView>
+    </ScrollView>
+
+</LinearLayout>

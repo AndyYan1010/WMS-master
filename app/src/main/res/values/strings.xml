@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">WMS</string>
+    <string name="idtxthint">用户名</string>
+    <string name="pwdtxthint">密码</string>
+    <string name="loginbtntext">登录</string>
+    <string name="menu">菜单</string>
+    <string name="slkd">物料接收</string>
+    <string name="wlsj">物料上架</string>
+    <string name="flkd">发料开单</string>
+    <string name="jlcp">截料拆批</string>
+    <string name="kccx">库存查询</string>
+    <string name="pandian">盘点</string>
+    <string name="bzzs">包装追溯</string>
+    <string name="cpfh">成品发货</string>
+    <string name="kscl">库损处理</string>
+    <string name="pddel">详细信息</string>
+    <string name="fl">发料</string>
+    <string name="yp">已盘</string>
+    <string name="cy">差异</string>
+    <string name="dqtotal">当前显示总数：</string>
+    <string name="sjtotal">实际总数：</string>
+    <string name="pici">批次号：</string>
+    <string name="sl">数 量：</string>
+    <string name="submit">提交</string>
+    <string name="slno">扫描或输入收料单号</string>
+    <string name="zhijian">物料质检</string>
+    <string name="hege">合格品</string>
+    <string name="bhege">不合格品</string>
+    <string name="hjbh">扫描或输入货架编号</string>
+    <string name="smtm">扫描或输入条码</string>
+    <string name="srsl">输入数量</string>
+    <string name="owner">选择货主</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

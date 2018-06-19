@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.administrator.wms">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.ShouliaoActivity" />
+        <activity android:name=".activity.ShangjiaActivity" />
+        <activity android:name=".activity.FaliaoActivity" />
+        <activity android:name=".activity.JieliaoActivity" />
+        <activity android:name=".activity.KucunActivity" />
+        <activity android:name=".activity.PandianActivity" />
+        <activity android:name=".activity.BaozhuangActivity" />
+        <activity android:name=".activity.ChengpinActivity" />
+        <activity android:name=".activity.KusunActivity" />
+        <activity android:name=".activity.FldetailActivity" />
+        <activity android:name=".activity.AsnActivity" />
+        <activity android:name=".activity.ZhijianActivity" />
+        <activity android:name=".activity.YesActivity" />
+        <activity android:name=".activity.NoActivity" />
+        <activity android:name=".activity.Faliao2Activity"></activity>
+    </application>
+
+</manifest>

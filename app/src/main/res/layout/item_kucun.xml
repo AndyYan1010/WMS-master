@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="序号:"
+            android:textColor="@color/black"
+            android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/tv_xuhao"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:textSize="20sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="项次:"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="20dp"/>
+        <TextView
+            android:id="@+id/tv_xiangci"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="应         发:"
+            android:textColor="@color/black"
+            android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/tv_yf"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="实         发:"
+            android:textColor="@color/black"
+            android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/tv_sf"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="差         异:"
+            android:textColor="@color/black"
+            android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/tv_cy"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="产品编码:"
+            android:textColor="@color/black"
+            android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/tv_cpbm"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="产品规格:"
+            android:textColor="@color/black"
+            android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/tv_cpgg"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="供  应  商:"
+            android:textColor="@color/black"
+            android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/tv_supplier"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="仓         库:"
+            android:textColor="@color/black"
+            android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/tv_stock"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="单         位:"
+            android:textColor="@color/black"
+            android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/tv_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textSize="20sp"/>
+    </LinearLayout>
+</LinearLayout>

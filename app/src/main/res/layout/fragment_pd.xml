@@ -1,0 +1,64 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.administrator.wms.fragment.PdFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="包装批次:"
+            android:textSize="20sp"
+            android:textColor="@color/black"/>
+        <EditText
+            android:id="@+id/et_pici"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="物料批次:"
+            android:textSize="20sp"
+            android:textColor="@color/black"/>
+        <TextView
+            android:id="@+id/tv_wlpc"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="2"
+            android:textSize="20sp"
+            android:layout_marginLeft="10dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_shuliang"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="数         量:"
+            android:textSize="20sp"
+            android:textColor="@color/black"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="2"
+            android:textSize="20sp"
+            android:layout_marginLeft="10dp"/>
+    </LinearLayout>
+</LinearLayout>

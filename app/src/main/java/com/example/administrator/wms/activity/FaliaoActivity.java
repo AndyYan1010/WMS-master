@@ -27,7 +27,7 @@ public class FaliaoActivity extends AppCompatActivity implements View.OnClickLis
     private TextView         tv_title;
     private TabLayout        mTablayout;//导航标签
     private MyFixedViewpager mView_pager;//自我viewpager可实现禁止滑动
-    private String[] mStrings = {"调拨单", "已取单"};
+    private String[] mStrings = {"调拨单", "取料单"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -112,7 +112,7 @@ public class FaliaoActivity extends AppCompatActivity implements View.OnClickLis
         // 给ViewPager设置适配器
         mView_pager.setAdapter(myPagerAdapter);
         //设置viewpager不可滑动
-        //		mView_pager_space.setCanScroll(false);
+//        mView_pager.setCanScroll(false);
         //tablayout关联tablayout和viewpager实现联动
         mTablayout.setupWithViewPager(mView_pager);
         for (int i = 0; i < mStrings.length; i++) {

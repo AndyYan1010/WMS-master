@@ -1,39 +1,53 @@
 package com.example.administrator.wms.activity;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.administrator.wms.R;
-import com.example.administrator.wms.adapter.MyPagerAdapter;
-import com.example.administrator.wms.fragment.AllocationOrderFragment;
-import com.example.administrator.wms.fragment.TakeOrderFragment;
-import com.example.administrator.wms.view.MyFixedViewpager;
+import com.example.administrator.wms.adapter.LvOrderNumAdapter;
+import com.example.administrator.wms.util.Consts;
+import com.example.administrator.wms.util.ProgressDialogUtil;
+import com.example.administrator.wms.util.SoapUtil;
+import com.example.administrator.wms.util.ToastUtils;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class FaliaoActivity extends AppCompatActivity implements View.OnClickListener {
-    private Toolbar          toolbar;
     //    private TextView tv_gongji;
     //    private ListView lv_fl;
     //    private FaliaoApater adapter;
     //    private List<Faliao> list = new ArrayList<>();
-    private ImageView        img_back;
-    private TextView         tv_title;
-    private TabLayout        mTablayout;//导航标签
-    private MyFixedViewpager mView_pager;//自我viewpager可实现禁止滑动
+    private Toolbar            toolbar;
+    private ImageView          img_back;
+    private TextView           tv_title;
+    private ListView           lv_ord_num;
+    private SmartRefreshLayout smartRefresh;
     private String[] mStrings = {"调拨单", "取料单"};
+    private List<String>      mData;
+    private LvOrderNumAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_faliao);
-        //        setTool();
+        //setTool();
         setViews();
         setData();
         setListeners();
@@ -85,39 +99,32 @@ public class FaliaoActivity extends AppCompatActivity implements View.OnClickLis
         //        lv_fl.setAdapter(adapter);
         img_back = findViewById(R.id.img_back);
         tv_title = findViewById(R.id.tv_title);
-        mTablayout = findViewById(R.id.tablayout);
-        mView_pager = findViewById(R.id.view_pager);
+        smartRefresh = findViewById(R.id.smart_ref);
+        lv_ord_num = findViewById(R.id.lv_ord_num);
     }
 
     private void setData() {
         img_back.setOnClickListener(this);
-        tv_title.setText("发料开单");
-        initTabFragment();
-    }
+        tv_title.setText("调拨列表");
+        mData = new ArrayList();
+        mData.add("126.360.155");
+        mData.add("126.360.026");
+        mData.add("126.282.052");
+        mData.add("126.651.662");
+        adapter = new LvOrderNumAdapter(FaliaoActivity.this, mData);
+        lv_ord_num.setAdapter(adapter);
+        lv_ord_num.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(FaliaoActivity.this, AllocationDetailActivity.class);
+                intent.putExtra("orderID", mData.get(i));
+                startActivity(intent);
+            }
+        });
 
-    private void initTabFragment() {
-        // 创建一个集合,装填Fragment
-        ArrayList<Fragment> fragments = new ArrayList<>();
-        // 装填
-        //需求调拨界面
-        AllocationOrderFragment AllOrderFragment = new AllocationOrderFragment();
-        fragments.add(AllOrderFragment);
-        //取料界面
-        TakeOrderFragment takeOrderFragment = new TakeOrderFragment();
-        fragments.add(takeOrderFragment);
-
-        // 创建ViewPager适配器
-        MyPagerAdapter myPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
-        myPagerAdapter.setFragments(fragments);
-        // 给ViewPager设置适配器
-        mView_pager.setAdapter(myPagerAdapter);
-        //设置viewpager不可滑动
-//        mView_pager.setCanScroll(false);
-        //tablayout关联tablayout和viewpager实现联动
-        mTablayout.setupWithViewPager(mView_pager);
-        for (int i = 0; i < mStrings.length; i++) {
-            mTablayout.getTabAt(i).setText(mStrings[i]);
-        }
+        //查询所有的调拨单
+        String allOrderUrl = "select fbillno from icstockbill where ftrantype=41 and isnull(fcheckerid,0)=0";
+        new ItemTask(allOrderUrl).execute();
     }
 
     protected void setListeners() {
@@ -136,6 +143,54 @@ public class FaliaoActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.img_back:
                 finish();
                 break;
+        }
+    }
+
+    class ItemTask extends AsyncTask<Void, String, String> {
+        String sql;
+
+        ItemTask(String sql) {
+            this.sql = sql;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            Map<String, String> map = new HashMap<>();
+            map.put("FSql", sql);
+            map.put("FTable", "t_icitem");
+            return SoapUtil.requestWebService(Consts.JA_select, map);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            try {
+                if (null==mData){
+                    mData=new ArrayList<>();
+                }else {
+                    mData.clear();
+                }
+                Document doc = DocumentHelper.parseText(s);
+                Element ele = doc.getRootElement();
+                Iterator iter = ele.elementIterator("Cust");
+                HashMap<String, String> map = new HashMap<>();
+                while (iter.hasNext()) {
+                    Element recordEle = (Element) iter.next();
+                    map.put("fbillno", recordEle.elementTextTrim("fbillno"));//调拨单id
+                    mData.add(recordEle.elementTextTrim("fbillno"));
+                }
+                //刷新页面
+                adapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                e.printStackTrace();
+                ToastUtils.showToast(FaliaoActivity.this, "未搜索到调拨单");
+            }
+            ProgressDialogUtil.hideDialog();
         }
     }
 }

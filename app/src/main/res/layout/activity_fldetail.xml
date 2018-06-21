@@ -28,7 +28,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btn_selected"
+            android:background="@null"
             android:text="明细"
             android:textColor="@color/btn_color"/>
 
@@ -38,7 +38,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btn_selected"
+            android:background="@null"
             android:text="发料"
             android:textColor="@color/btn_color"/>
 
@@ -47,7 +47,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btn_selected"
+            android:background="@null"
             android:text="截料"
             android:textColor="@color/btn_color"/>
 
@@ -57,7 +57,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btn_selected"
+            android:background="@null"
             android:text="已发"
             android:textColor="@color/btn_color"/>
 

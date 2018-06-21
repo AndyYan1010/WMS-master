@@ -6,8 +6,18 @@ package com.example.administrator.wms.util;
  */
 
 public class Consts {
+    //总服务器地址
+    public static String ENDPOINT = "http://192.168.249.1:8090/Service1.asmx";
+
+    //登录接口
+    public static String Login     = "Login";
+    //查询接口
+    public static String JA_select = "JA_select";
+    //下单接口
+    public static String ORDER     = "SEOrder";
+
     // 用户保存文件名
     public static final String FILENAME = "userinfo.json";
     //host
-    public static String URL = "http://192.168.10.170:8082/";
+    public static       String URL      = "http://192.168.10.170:8082/";
 }

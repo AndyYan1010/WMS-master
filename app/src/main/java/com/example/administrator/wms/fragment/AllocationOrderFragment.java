@@ -1,5 +1,6 @@
 package com.example.administrator.wms.fragment;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,9 +11,20 @@ import android.view.ViewGroup;
 
 import com.example.administrator.wms.R;
 import com.example.administrator.wms.adapter.TransferAdapter;
+import com.example.administrator.wms.util.Consts;
+import com.example.administrator.wms.util.ProgressDialogUtil;
+import com.example.administrator.wms.util.SoapUtil;
+import com.example.administrator.wms.util.ToastUtils;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @创建者 AndyYan
@@ -26,6 +38,7 @@ import java.util.List;
 public class AllocationOrderFragment extends Fragment {
     private View         mRootView;
     private RecyclerView rec_view;
+    private String       mOrderID;//调拨单ID
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,5 +82,68 @@ public class AllocationOrderFragment extends Fragment {
         rec_view.setLayoutManager(gridLayoutManager);
         TransferAdapter adapter = new TransferAdapter(getContext(), mData);
         rec_view.setAdapter(adapter);
+
+        String detOrdUrl = "select c.fnumber,c.fname,c.fmodel,f.fname,b.fqty,d.fname fin,e.fname fout from icstockbill a inner join icstockbillentry b on a.finterid=b.finterid" +
+                "left join t_icitem c on c.fitemid=b.fitemid left join t_stock d on d.fitemid=b.fdcstockid" +
+                "left join t_stock e on e.fitemid=b.fscstockid left join t_measureunit f on f.fitemid=b.funitid where ftrantype=41 and isnull(fcheckerid,0)=0 and a.fbillno='" + mOrderID + "'";
+        new ItemTask(detOrdUrl).execute();
+    }
+
+    public void setOrderID(String oderId) {
+        this.mOrderID = oderId;
+    }
+
+    /*
+* select c.fnumber,c.fname,c.fmodel,f.fname,b.fqty,d.fname fin,e.fname fout from icstockbill a inner join icstockbillentry b on a.finterid=b.finterid
+left join t_icitem c on c.fitemid=b.fitemid left join t_stock d on d.fitemid=b.fdcstockid
+left join t_stock e on e.fitemid=b.fscstockid left join t_measureunit f on f.fitemid=b.funitid where ftrantype=41 and isnull(fcheckerid,0)=0 and a.fbillno='单号'
+* */
+    class ItemTask extends AsyncTask<Void, String, String> {
+        String sql;
+
+        ItemTask(String sql) {
+            this.sql = sql;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            Map<String, String> map = new HashMap<>();
+            map.put("FSql", sql);
+            map.put("FTable", "t_icitem");
+            return SoapUtil.requestWebService(Consts.JA_select, map);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            try {
+                Document doc = DocumentHelper.parseText(s);
+                Element ele = doc.getRootElement();
+                Iterator iter = ele.elementIterator("Cust");
+                HashMap<String, String> map = new HashMap<>();
+                while (iter.hasNext()) {
+                    Element recordEle = (Element) iter.next();
+                    map.put("fnumber", recordEle.elementTextTrim("fnumber"));//物料内码(提交订单用)
+                    map.put("fname", recordEle.elementTextTrim("fname"));//物料名称
+                    map.put("fmodel", recordEle.elementTextTrim("fmodel"));//销售单价
+                    map.put("fname", recordEle.elementTextTrim("fname"));//库存数量
+                    map.put("fqty", recordEle.elementTextTrim("fqty"));//单位
+                    map.put("fname", recordEle.elementTextTrim("fname"));//单位id
+                    map.put("fname", recordEle.elementTextTrim("fname"));//折后单价
+                }
+                //填充数据到页面
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                ToastUtils.showToast(getContext(), "未查到此商品");
+                getActivity().finish();
+            }
+            ProgressDialogUtil.hideDialog();
+        }
     }
 }

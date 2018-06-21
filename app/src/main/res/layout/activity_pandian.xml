@@ -28,7 +28,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btn_selected"
+            android:background="@null"
             android:text="@string/pddel"
             android:textColor="@color/btn_color"/>
 
@@ -38,7 +38,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btn_selected"
+            android:background="@null"
             android:text="@string/pandian"
             android:textColor="@color/btn_color"/>
 
@@ -47,7 +47,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btn_selected"
+            android:background="@null"
             android:text="@string/yp"
             android:textColor="@color/btn_color"/>
 
@@ -57,7 +57,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btn_selected"
+            android:background="@null"
             android:text="@string/cy"
             android:textColor="@color/btn_color"/>
 

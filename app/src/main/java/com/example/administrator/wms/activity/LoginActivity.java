@@ -1,19 +1,14 @@
 package com.example.administrator.wms.activity;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -29,27 +24,32 @@ import android.widget.Toast;
 
 import com.example.administrator.wms.R;
 import com.example.administrator.wms.entity.User;
+import com.example.administrator.wms.util.Consts;
+import com.example.administrator.wms.util.SoapUtil;
+import com.example.administrator.wms.util.ToastUtils;
 import com.example.administrator.wms.util.UserUtil;
 import com.example.administrator.wms.view.CustomProgress;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, PopupWindow.OnDismissListener {
     protected static final String TAG = "LoginActivity";
-    private EditText et_user,et_pwd;//用户名,密码
-    private Button btn_log;//登录按钮
-    private LinearLayout mLoginLinearLayout; // 登录内容的容器
-    private LinearLayout mUserIdLinearLayout; // 将下拉弹出窗口在此容器下方显示
-    private Animation mTranslate; // 位移动画
-    private ImageView mMoreUser; // 下拉图标
-    private ImageView mLoginMoreUserView; // 弹出下拉弹出窗的按钮
-    private String mIdString;
-    private String mPwdString;
+    private EditText et_user, et_pwd;//用户名,密码
+    private Button          btn_log;//登录按钮
+    private LinearLayout    mLoginLinearLayout; // 登录内容的容器
+    private LinearLayout    mUserIdLinearLayout; // 将下拉弹出窗口在此容器下方显示
+    private Animation       mTranslate; // 位移动画
+    private ImageView       mMoreUser; // 下拉图标
+    private ImageView       mLoginMoreUserView; // 弹出下拉弹出窗的按钮
+    private String          mIdString;
+    private String          mPwdString;
     private ArrayList<User> mUsers; // 用户列表
-    private ListView mUserIdListView; // 下拉弹出窗显示的ListView对象
-    private MyAapter mAdapter; // ListView的监听器
-    private PopupWindow mPop; // 下拉弹出窗
-    private CustomProgress dialog;
+    private ListView        mUserIdListView; // 下拉弹出窗显示的ListView对象
+    private MyAapter        mAdapter; // ListView的监听器
+    private PopupWindow     mPop; // 下拉弹出窗
+    private CustomProgress  dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
         mUsers = UserUtil.getUserList(LoginActivity.this);
 
         if (mUsers.size() > 0) {
-			/* 将列表中的第一个user显示在编辑框 */
+            /* 将列表中的第一个user显示在编辑框 */
             et_user.setText(mUsers.get(0).getId());
             et_pwd.setText(mUsers.get(0).getPwd());
         }
@@ -77,7 +77,7 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
         mUserIdListView.setAdapter(mAdapter);
     }
 
-    public void setViews(){
+    public void setViews() {
         et_user = (EditText) findViewById(R.id.login_edtId);
         et_pwd = (EditText) findViewById(R.id.login_edtPwd);
         btn_log = (Button) findViewById(R.id.login_btnLogin);
@@ -87,7 +87,6 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
         mUserIdLinearLayout = (LinearLayout) findViewById(R.id.userId_LinearLayout);
         mTranslate = AnimationUtils.loadAnimation(this, R.anim.my_translate); // 初始化动画对象
     }
-
 
 
     public void initPop() {
@@ -101,7 +100,7 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
 
     }
 
-    public void setListeners(){
+    public void setListeners() {
         mMoreUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,37 +119,15 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
             @Override
             public void onClick(View view) {
                 // 启动登录
-                Log.i(TAG, mIdString + "  " + mPwdString);
-//                if (mIdString == null || mIdString.equals("")) { // 账号为空时
-//                    Toast.makeText(LoginActivity.this, "请输入账号", Toast.LENGTH_SHORT)
-//                            .show();
-//                } else if (mPwdString == null || mPwdString.equals("")) {// 密码为空时
-//                    Toast.makeText(LoginActivity.this, "请输入密码", Toast.LENGTH_SHORT)
-//                            .show();
-//                } else {// 账号和密码都不为空时
-//                    dialog=CustomProgress.show(LoginActivity.this,"登录中...", true, null);
-//                    boolean mIsSave = true;
-//                    try {
-//                        Log.i(TAG, "保存用户列表");
-//                        for (User user : mUsers) { // 判断本地文档是否有此ID用户
-//                            if (user.getId().equals(mIdString)) {
-//                                mIsSave = false;
-//                                break;
-//                            }
-//                        }
-//                        if (mIsSave) { // 将新用户加入users
-//                            User user = new User(mIdString, mPwdString);
-//                            mUsers.add(user);
-//                        }
-//
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                    dialog.dismiss();
-                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(LoginActivity.this,MainActivity.class));
-                    finish();
-//                }
+                if (null == mIdString || "".equals(mIdString)) {
+                    ToastUtils.showToast(LoginActivity.this,"用户名不能为空");
+                    return;
+                }
+                if (null == mPwdString || "".equals(mPwdString)) {
+                    ToastUtils.showToast(LoginActivity.this,"密码不能为空");
+                    return;
+                }
+                new LoginTask(mIdString, mPwdString).execute();
             }
         });
 
@@ -239,6 +216,42 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
 
     }
 
+    class LoginTask extends AsyncTask<Void, String, String> {
+        String username;
+        String password;
+
+        LoginTask(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            Map<String, String> map = new HashMap<>();
+            map.put("UserName", username);
+            map.put("PassWord", password);
+            return SoapUtil.requestWebService(Consts.Login, map);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            dialog.dismiss();
+            if (s.contains("成功")) {
+                Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                finish();
+            } else {
+                ToastUtils.showToast(LoginActivity.this, "登陆失败");
+            }
+        }
+    }
 
     /* 退出此Activity时保存users */
     @Override

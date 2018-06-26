@@ -64,8 +64,10 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
 
         if (mUsers.size() > 0) {
             /* 将列表中的第一个user显示在编辑框 */
-            et_user.setText(mUsers.get(0).getId());
-            et_pwd.setText(mUsers.get(0).getPwd());
+//            et_user.setText(mUsers.get(0).getId());
+//            et_pwd.setText(mUsers.get(0).getPwd());
+            et_user.setText("administrator");
+            et_pwd.setText("Kingdee@2016");
         }
 
         LinearLayout parent = (LinearLayout) getLayoutInflater().inflate(
@@ -118,13 +120,17 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
         btn_log.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                mIdString = String.valueOf(et_user.getText()).trim();
+//                mPwdString = String.valueOf(et_pwd.getText()).trim();
+                mIdString = "administrator";
+                mPwdString = "Kingdee@2016";
                 // 启动登录
-                if (null == mIdString || "".equals(mIdString)) {
-                    ToastUtils.showToast(LoginActivity.this,"用户名不能为空");
+                if (null == mIdString || "".equals(mIdString)||"用户名".equals(mIdString)) {
+                    ToastUtils.showToast(LoginActivity.this, "用户名不能为空");
                     return;
                 }
-                if (null == mPwdString || "".equals(mPwdString)) {
-                    ToastUtils.showToast(LoginActivity.this,"密码不能为空");
+                if (null == mPwdString || "".equals(mPwdString)||"密码".equals(mPwdString)) {
+                    ToastUtils.showToast(LoginActivity.this, "密码不能为空");
                     return;
                 }
                 new LoginTask(mIdString, mPwdString).execute();
@@ -163,8 +169,10 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        et_user.setText(mUsers.get(i).getId());
-        et_pwd.setText(mUsers.get(i).getPwd());
+//        et_user.setText(mUsers.get(i).getId());
+//        et_pwd.setText(mUsers.get(i).getPwd());
+        et_user.setText("administrator");
+        et_pwd.setText("Kingdee@2016");
         mPop.dismiss();
     }
 
@@ -228,7 +236,9 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            dialog.show();
+            if (null!=dialog){
+                dialog.show();
+            }
         }
 
         @Override
@@ -242,7 +252,9 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            dialog.dismiss();
+            if (null!=dialog){
+                dialog.show();
+            }
             if (s.contains("成功")) {
                 Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));

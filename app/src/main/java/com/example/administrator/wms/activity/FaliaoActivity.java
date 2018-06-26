@@ -107,10 +107,10 @@ public class FaliaoActivity extends AppCompatActivity implements View.OnClickLis
         img_back.setOnClickListener(this);
         tv_title.setText("调拨列表");
         mData = new ArrayList();
-        mData.add("126.360.155");
-        mData.add("126.360.026");
-        mData.add("126.282.052");
-        mData.add("126.651.662");
+//        mData.add("126.360.155");
+//        mData.add("126.360.026");
+//        mData.add("126.282.052");
+//        mData.add("126.651.662");
         adapter = new LvOrderNumAdapter(FaliaoActivity.this, mData);
         lv_ord_num.setAdapter(adapter);
         lv_ord_num.setOnItemClickListener(new AdapterView.OnItemClickListener() {

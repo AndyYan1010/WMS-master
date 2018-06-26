@@ -7,7 +7,7 @@ package com.example.administrator.wms.util;
 
 public class Consts {
     //总服务器地址
-    public static String ENDPOINT = "http://192.168.249.1:8090/Service1.asmx";
+    public static String ENDPOINT = "http://205.168.1.106:8088/Service1.asmx";
 
     //登录接口
     public static String Login     = "Login";

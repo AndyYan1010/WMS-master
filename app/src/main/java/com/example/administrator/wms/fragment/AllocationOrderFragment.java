@@ -86,6 +86,7 @@ public class AllocationOrderFragment extends Fragment {
         String detOrdUrl = "select c.fnumber,c.fname,c.fmodel,f.fname,b.fqty,d.fname fin,e.fname fout from icstockbill a inner join icstockbillentry b on a.finterid=b.finterid" +
                 "left join t_icitem c on c.fitemid=b.fitemid left join t_stock d on d.fitemid=b.fdcstockid" +
                 "left join t_stock e on e.fitemid=b.fscstockid left join t_measureunit f on f.fitemid=b.funitid where ftrantype=41 and isnull(fcheckerid,0)=0 and a.fbillno='" + mOrderID + "'";
+        //查询单个调拨单详情
         new ItemTask(detOrdUrl).execute();
     }
 
@@ -129,12 +130,12 @@ left join t_stock e on e.fitemid=b.fscstockid left join t_measureunit f on f.fit
                 while (iter.hasNext()) {
                     Element recordEle = (Element) iter.next();
                     map.put("fnumber", recordEle.elementTextTrim("fnumber"));//物料内码(提交订单用)
-                    map.put("fname", recordEle.elementTextTrim("fname"));//物料名称
-                    map.put("fmodel", recordEle.elementTextTrim("fmodel"));//销售单价
-                    map.put("fname", recordEle.elementTextTrim("fname"));//库存数量
-                    map.put("fqty", recordEle.elementTextTrim("fqty"));//单位
-                    map.put("fname", recordEle.elementTextTrim("fname"));//单位id
-                    map.put("fname", recordEle.elementTextTrim("fname"));//折后单价
+                    map.put("fname", recordEle.elementTextTrim("fname"));//
+                    map.put("fmodel", recordEle.elementTextTrim("fmodel"));//
+                    map.put("fname", recordEle.elementTextTrim("fname"));//
+                    map.put("fqty", recordEle.elementTextTrim("fqty"));//
+                    map.put("fname", recordEle.elementTextTrim("fname"));//
+                    map.put("fname", recordEle.elementTextTrim("fname"));//
                 }
                 //填充数据到页面
 

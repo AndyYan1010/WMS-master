@@ -1,23 +1,38 @@
 package com.example.administrator.wms.fragment;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.administrator.wms.R;
+import com.example.administrator.wms.activity.AllocationDetailActivity;
 import com.example.administrator.wms.adapter.TransferAdapter;
+import com.example.administrator.wms.messageInfo.GoodsInfo;
+import com.example.administrator.wms.util.Consts;
+import com.example.administrator.wms.util.ProgressDialogUtil;
+import com.example.administrator.wms.util.SoapUtil;
+import com.example.administrator.wms.util.ToastUtils;
 import com.uuzuche.lib_zxing.activity.CaptureActivity;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @创建者 AndyYan
@@ -32,7 +47,13 @@ public class TakeOrderFragment extends Fragment implements View.OnClickListener 
     private View         mRootView;
     private RecyclerView rec_view;
     private Button       bt_scan;
+    private Button       bt_submit;//提交
     private int REQUEST_CODE = 1002;//接收扫描结果
+    private List            mData;//显示存储的数据
+    private List<GoodsInfo> mGoodsInfo;//存储的数据对象
+    private TransferAdapter adapter;
+    private EditText        edit_num;
+    private ImageView       img_delete;//清空物料代码
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,12 +65,16 @@ public class TakeOrderFragment extends Fragment implements View.OnClickListener 
     }
 
     private void initView() {
+        edit_num = mRootView.findViewById(R.id.edit_num);
+        img_delete = mRootView.findViewById(R.id.img_delete);
         rec_view = mRootView.findViewById(R.id.rec_view);
         bt_scan = mRootView.findViewById(R.id.bt_scan);
+        bt_submit = mRootView.findViewById(R.id.bt_submit);
     }
 
     private void initData() {
-        final List mData = new ArrayList();
+        mData = new ArrayList();
+        mGoodsInfo = new ArrayList();
         mData.add("物料代码");
         mData.add("名称");
         mData.add("规格");
@@ -57,17 +82,17 @@ public class TakeOrderFragment extends Fragment implements View.OnClickListener 
         mData.add("单位");
         mData.add("调入仓库");
         mData.add("调出仓库");
-        mData.add("10.1002.220220");
-        for (int i = 0; i < 50; i++) {
-            mData.add("lol" + (i) * 10);
-        }
+        //        mData.add("10.1002.220220");
+        //        for (int i = 0; i < 50; i++) {
+        //            mData.add("lol" + (i) * 10);
+        //        }
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 8);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 9);
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
 
             @Override
             public int getSpanSize(int position) {
-                if (position % 7 == 0) {
+                if (position % 7 == 0 || position % 7 == 2) {
                     return 2;
                 } else {
                     return 1;
@@ -75,20 +100,55 @@ public class TakeOrderFragment extends Fragment implements View.OnClickListener 
             }
         });
         rec_view.setLayoutManager(gridLayoutManager);
-        TransferAdapter adapter = new TransferAdapter(getContext(), mData);
+        adapter = new TransferAdapter(getContext(), mData);
         rec_view.setAdapter(adapter);
     }
 
     private void initListener() {
+        edit_num.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String num = String.valueOf(edit_num.getText()).trim();
+                if (!"".equals(num) && !"物料代码".equals(num) && num.length() > 5) {
+                    //对比调拨单中的物料代码
+                    getGoodsInfo(num);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        img_delete.setOnClickListener(this);
         bt_scan.setOnClickListener(this);
+        bt_submit.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.img_delete:
+                edit_num.setText("");
+                break;
             case R.id.bt_scan:
                 Intent intent = new Intent(getContext(), CaptureActivity.class);
                 startActivityForResult(intent, REQUEST_CODE);
+                break;
+            case R.id.bt_submit:
+                AllocationDetailActivity activity = (AllocationDetailActivity) getActivity();
+                String orderID = activity.getOrderID();
+                //提交调拨的数据
+                String detOrdUrl = "select c.fitemid,a.finterid,c.fnumber,c.fname,c.fmodel,f.fname,b.fqty,d.fname fin,e.fname fout from icstockbill a inner join icstockbillentry b on a.finterid=b.finterid " +
+                        "left join t_icitem c on c.fitemid=b.fitemid left join t_stock d on d.fitemid=b.fdcstockid " +
+                        "left join t_stock e on e.fitemid=b.fscstockid left join t_measureunit f on f.fitemid=b.funitid where ftrantype=41 and isnull(fcheckerid,0)=0 and isnull(FEntrySelfD0152,0)=0 and a.fbillno='" + orderID + "' and c.fnumber='" + "num" + "'";
+                SubmitTask submitTask = new SubmitTask(detOrdUrl);
+                submitTask.execute();
                 break;
         }
     }
@@ -109,11 +169,128 @@ public class TakeOrderFragment extends Fragment implements View.OnClickListener 
                 if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
                     String result = bundle.getString(CodeUtils.RESULT_STRING);
                     //获取调拨单id信息，弹出dailog展示，在新的页面确定后添加到表格中
-                    // sendGoodsInfo(result);
+                    getGoodsInfo(result);
                 } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
                     Toast.makeText(getContext(), "解析二维码失败", Toast.LENGTH_LONG).show();
                 }
             }
+        }
+    }
+
+    /**
+     * String detOrdUrl = "select c.fitemid,a.finterid,c.fnumber,c.fname,c.fmodel,f.fname,b.fqty,d.fname fin,e.fname fout from icstockbill a inner join icstockbillentry b on a.finterid=b.finterid " +
+     * "left join t_icitem c on c.fitemid=b.fitemid left join t_stock d on d.fitemid=b.fdcstockid " +
+     * "left join t_stock e on e.fitemid=b.fscstockid left join t_measureunit f on f.fitemid=b.funitid where ftrantype=41 and isnull(fcheckerid,0)=0 and isnull(FEntrySelfD0152,0)=0 and a.fbillno='" + mOrderID + "' and c.fnumber='物料代码'" ;
+     */
+
+    private void getGoodsInfo(String result) {//result是一维码，也即物品的物料代码
+        AllocationDetailActivity activity = (AllocationDetailActivity) getActivity();
+        List<GoodsInfo> infoList = activity.getInfoList();
+        if (null == result) {
+            ToastUtils.showToast(getContext(), "扫描失败，请重新扫描");
+            return;
+        }
+        isFind = false;
+        ToastUtils.showToast(getContext(), result);
+        for (GoodsInfo info : infoList) {
+            String fnumber = info.getFnumber();//物料代码
+            if (fnumber.equals(result)) {
+                isFind = true;
+                String fname = info.getFname();//名称
+                String fmodel = info.getFmodel();//规格
+                String fqty = info.getFqty();//数量
+                String fname1 = info.getFname1();//单位
+                String fin = info.getFin();//调用仓库
+                String fout = info.getFout();//调出仓库
+                //弹出dialog修改数量
+                showChangeView(fnumber, fname, fmodel, fqty, fname1, fin, fout);
+            }
+        }
+        if (!isFind) {
+            ToastUtils.showToast(getContext(), "该扫描的物品不在调拨单内");
+        }
+    }
+
+    private boolean isFind = false;
+    private AlertDialog mAlertDialog;
+
+    private void showChangeView(final String fnumber, final String fname, final String fmodel, String fqty, final String fname1, final String fin, final String fout) {
+        //弹一个dailog提示
+        View view = View.inflate(getContext(), R.layout.dialog_change_num, null);
+        TextView tv_name = view.findViewById(R.id.tv_name);
+        TextView tv_spec = view.findViewById(R.id.tv_spec);
+        final EditText edit_num = view.findViewById(R.id.edit_num);
+        TextView tv_unit = view.findViewById(R.id.tv_unit);
+        TextView tv_fin = view.findViewById(R.id.tv_fin);
+        TextView tv_fout = view.findViewById(R.id.tv_fout);
+        Button bt_sure = view.findViewById(R.id.bt_sure);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        mAlertDialog = builder.setView(view).create();
+        mAlertDialog.show();
+        tv_name.setText(fname);
+        tv_spec.setText(fmodel);
+        tv_unit.setText(fname1);
+        tv_fin.setText(fin);
+        tv_fout.setText(fout);
+        bt_sure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //把参数加入到数据表内
+                String num = String.valueOf(edit_num.getText()).trim();
+                if (null == num || "".equals(num) || "请输入数量".equals(num)) {
+                    ToastUtils.showToast(getContext(), "数量不能为空");
+                    return;
+                }
+                mData.add(fnumber);//物料代码
+                mData.add(fname);//名称
+                mData.add(fmodel);//规格
+                mData.add(num);//数量
+                mData.add(fname1);//单位
+                mData.add(fin);//调用仓库
+                mData.add(fout);//调出仓库
+                //封装到对象中，方便之后提交
+                GoodsInfo goodsInfo = new GoodsInfo();
+                mGoodsInfo.add(goodsInfo);
+                mAlertDialog.hide();
+                adapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    class SubmitTask extends AsyncTask<Void, String, String> {
+        String sql;
+
+        SubmitTask(String sql) {
+            this.sql = sql;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            Map<String, String> map = new HashMap<>();
+            map.put("FSql", sql);
+            map.put("FTable", "t_icitem");
+            return SoapUtil.requestWebService(Consts.JA_select, map);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            try {
+                if (s.contains("成功")) {
+                    ToastUtils.showToast(getContext(), "提交成功");
+                } else {
+                    ToastUtils.showToast(getContext(), "提交失败");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                ToastUtils.showToast(getContext(), "提交失败");
+            }
+            ProgressDialogUtil.hideDialog();
         }
     }
 }

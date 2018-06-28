@@ -13,9 +13,11 @@ import com.example.administrator.wms.R;
 import com.example.administrator.wms.adapter.MyPagerAdapter;
 import com.example.administrator.wms.fragment.AllocationOrderFragment;
 import com.example.administrator.wms.fragment.TakeOrderFragment;
+import com.example.administrator.wms.messageInfo.GoodsInfo;
 import com.example.administrator.wms.view.MyFixedViewpager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @创建者 AndyYan
@@ -32,7 +34,8 @@ public class AllocationDetailActivity extends BaseActivity implements View.OnCli
     private TabLayout        mTablayout;//导航标签
     private MyFixedViewpager mView_pager;//自我viewpager可实现禁止滑动
     private String[] mStrings = {"调拨单", "取料单"};
-    private String orderID;//前面传过来的调拨单ID
+    private String          orderID;//前面传过来的调拨单ID
+    private List<GoodsInfo> mGoodsInfoList;//存放需查找的物品信息
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,7 @@ public class AllocationDetailActivity extends BaseActivity implements View.OnCli
     private void setData() {
         img_back.setOnClickListener(this);
         tv_title.setText("发料开单");
+        mGoodsInfoList = new ArrayList();
         initTabFragment();
     }
 
@@ -90,5 +94,14 @@ public class AllocationDetailActivity extends BaseActivity implements View.OnCli
                 finish();
                 break;
         }
+    }
+
+    //获取本act中存放物品信息的list
+    public List getInfoList() {
+        return mGoodsInfoList;
+    }
+
+    public String getOrderID() {
+        return orderID;
     }
 }

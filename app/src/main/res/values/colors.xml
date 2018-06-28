@@ -5,7 +5,6 @@
     <color name="colorAccent">#1296db</color>
     <color name="colorLogin">#e7e7e7</color>
     <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
     <color name="red">#FF0000</color>
     <color name="lred">#FF5151</color>
 
@@ -13,4 +12,11 @@
     <color name="gray_ef">#EFEFEF</color>
     <color name="vm_blue_38">#612384fe</color>
     <color name="deepskyblue">#00BFFF</color>
+    <!--黑色-->
+    <color name="black">#000000</color>
+    <color name="vm_black_100">#ff212121</color>
+    <color name="vm_black_87">#dd212121</color>
+    <color name="vm_black_54">#89212121</color>
+    <color name="vm_black_38">#61212121</color>
+    <color name="vm_black_12">#1e212121</color>
 </resources>

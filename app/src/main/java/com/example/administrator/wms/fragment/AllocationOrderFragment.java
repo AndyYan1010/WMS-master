@@ -88,9 +88,9 @@ public class AllocationOrderFragment extends Fragment {
         adapter = new TransferAdapter(getContext(), mData);
         rec_view.setAdapter(adapter);
 
-        String detOrdUrl = "select c.fnumber,c.fname,c.fmodel,f.fname,b.fqty,d.fname fin,e.fname fout from icstockbill a inner join icstockbillentry b on a.finterid=b.finterid " +
+        String detOrdUrl = "select b.finterid,c.fitemid,c.fnumber,c.fname,c.fmodel,f.fname,b.fqty,d.fname fin,e.fname fout from icstockbill a inner join icstockbillentry b on a.finterid=b.finterid " +
                 "left join t_icitem c on c.fitemid=b.fitemid left join t_stock d on d.fitemid=b.fdcstockid " +
-                "left join t_stock e on e.fitemid=b.fscstockid left join t_measureunit f on f.fitemid=b.funitid where ftrantype=41 and isnull(fcheckerid,0)=0 and isnull(FEntrySelfD0152,0)=0 and a.fbillno='" + mOrderID + "'" ;
+                "left join t_stock e on e.fitemid=b.fscstockid left join t_measureunit f on f.fitemid=b.funitid where ftrantype=41 and isnull(fcheckerid,0)=0 and isnull(FEntrySelfD0152,0)=0 and a.fbillno='" + mOrderID + "'";
         //查询单个调拨单详情
         new ItemTask(detOrdUrl).execute();
     }
@@ -134,6 +134,8 @@ left join t_stock e on e.fitemid=b.fscstockid left join t_measureunit f on f.fit
                 HashMap<String, String> map = new HashMap<>();
                 while (iter.hasNext()) {
                     Element recordEle = (Element) iter.next();
+                    map.put("finterid", recordEle.elementTextTrim("finterid"));
+                    map.put("fitemid", recordEle.elementTextTrim("fitemid"));
                     map.put("fnumber", recordEle.elementTextTrim("fnumber"));//物料代码//长
                     map.put("fname", recordEle.elementTextTrim("fname"));//名称
                     map.put("fmodel", recordEle.elementTextTrim("fmodel"));//规格//长
@@ -143,6 +145,8 @@ left join t_stock e on e.fitemid=b.fscstockid left join t_measureunit f on f.fit
                     map.put("fout", recordEle.elementTextTrim("fout"));//调出仓库
                     //封装到对象中，方便之后查询。
                     GoodsInfo goodsInfo = new GoodsInfo();
+                    goodsInfo.setFinterid(map.get("finterid"));
+                    goodsInfo.setFitemid(map.get("fitemid"));
                     goodsInfo.setFnumber(map.get("fnumber"));
                     goodsInfo.setFname(map.get("fname"));
                     goodsInfo.setFmodel(map.get("fmodel"));
@@ -161,6 +165,11 @@ left join t_stock e on e.fitemid=b.fscstockid left join t_measureunit f on f.fit
                     mData.add(map.get("fname1"));
                     mData.add(map.get("fin"));
                     mData.add(map.get("fout"));
+                }
+                if (mData.size() <= 7) {
+                    ToastUtils.showToast(getContext(), "该调拨单没有详情");
+                    getActivity().finish();
+                    return;
                 }
                 adapter.notifyDataSetChanged();
             } catch (Exception e) {

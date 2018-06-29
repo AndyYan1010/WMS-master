@@ -23,12 +23,18 @@ import com.example.administrator.wms.activity.AllocationDetailActivity;
 import com.example.administrator.wms.adapter.TransferAdapter;
 import com.example.administrator.wms.messageInfo.GoodsInfo;
 import com.example.administrator.wms.util.Consts;
-import com.example.administrator.wms.util.ProgressDialogUtil;
 import com.example.administrator.wms.util.SoapUtil;
 import com.example.administrator.wms.util.ToastUtils;
 import com.uuzuche.lib_zxing.activity.CaptureActivity;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
+
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -147,7 +153,7 @@ public class TakeOrderFragment extends Fragment implements View.OnClickListener 
                 String detOrdUrl = "select c.fitemid,a.finterid,c.fnumber,c.fname,c.fmodel,f.fname,b.fqty,d.fname fin,e.fname fout from icstockbill a inner join icstockbillentry b on a.finterid=b.finterid " +
                         "left join t_icitem c on c.fitemid=b.fitemid left join t_stock d on d.fitemid=b.fdcstockid " +
                         "left join t_stock e on e.fitemid=b.fscstockid left join t_measureunit f on f.fitemid=b.funitid where ftrantype=41 and isnull(fcheckerid,0)=0 and isnull(FEntrySelfD0152,0)=0 and a.fbillno='" + orderID + "' and c.fnumber='" + "num" + "'";
-                SubmitTask submitTask = new SubmitTask(detOrdUrl);
+                SubmitTask submitTask = new SubmitTask(mGoodsInfo);
                 submitTask.execute();
                 break;
         }
@@ -196,6 +202,8 @@ public class TakeOrderFragment extends Fragment implements View.OnClickListener 
             String fnumber = info.getFnumber();//物料代码
             if (fnumber.equals(result)) {
                 isFind = true;
+                String finterid = info.getFinterid();
+                String fitemid = info.getFitemid();
                 String fname = info.getFname();//名称
                 String fmodel = info.getFmodel();//规格
                 String fqty = info.getFqty();//数量
@@ -203,7 +211,7 @@ public class TakeOrderFragment extends Fragment implements View.OnClickListener 
                 String fin = info.getFin();//调用仓库
                 String fout = info.getFout();//调出仓库
                 //弹出dialog修改数量
-                showChangeView(fnumber, fname, fmodel, fqty, fname1, fin, fout);
+                showChangeView(fnumber, fname, fmodel, fqty, fname1, fin, fout, finterid, fitemid);
             }
         }
         if (!isFind) {
@@ -214,7 +222,7 @@ public class TakeOrderFragment extends Fragment implements View.OnClickListener 
     private boolean isFind = false;
     private AlertDialog mAlertDialog;
 
-    private void showChangeView(final String fnumber, final String fname, final String fmodel, String fqty, final String fname1, final String fin, final String fout) {
+    private void showChangeView(final String fnumber, final String fname, final String fmodel, String fqty, final String fname1, final String fin, final String fout, final String finterid, final String fitemid) {
         //弹一个dailog提示
         View view = View.inflate(getContext(), R.layout.dialog_change_num, null);
         TextView tv_name = view.findViewById(R.id.tv_name);
@@ -250,6 +258,9 @@ public class TakeOrderFragment extends Fragment implements View.OnClickListener 
                 mData.add(fout);//调出仓库
                 //封装到对象中，方便之后提交
                 GoodsInfo goodsInfo = new GoodsInfo();
+                goodsInfo.setFqty(num);
+                goodsInfo.setFitemid(fitemid);
+                goodsInfo.setFinterid(finterid);
                 mGoodsInfo.add(goodsInfo);
                 mAlertDialog.hide();
                 adapter.notifyDataSetChanged();
@@ -258,10 +269,10 @@ public class TakeOrderFragment extends Fragment implements View.OnClickListener 
     }
 
     class SubmitTask extends AsyncTask<Void, String, String> {
-        String sql;
+        List<GoodsInfo> mData;
 
-        SubmitTask(String sql) {
-            this.sql = sql;
+        SubmitTask(List mData) {
+            this.mData = mData;
         }
 
         @Override
@@ -271,26 +282,66 @@ public class TakeOrderFragment extends Fragment implements View.OnClickListener 
 
         @Override
         protected String doInBackground(Void... voids) {
-            Map<String, String> map = new HashMap<>();
-            map.put("FSql", sql);
-            map.put("FTable", "t_icitem");
-            return SoapUtil.requestWebService(Consts.JA_select, map);
+            try {
+                //表头
+                Document document = DocumentHelper.createDocument();
+                Element rootElement = document.addElement("NewDataSet");
+                Element cust = rootElement.addElement("Cust");
+                //                cust.addElement("FHeadSelfS0166").setText(order.getMembermobile());
+                //                //积分
+                //                cust.addElement("FHeadSelfS01100").setText(order.getPoint());
+                //                //业务类型
+                //                cust.addElement("FHeadSelfS0167").setText(order.getBusinesstype());
+                //                //送货地址
+                //                cust.addElement("FDeliveryAddress").setText(order.getAddress());
+
+                //表体
+                Document document2 = DocumentHelper.createDocument();
+                Element rootElement2 = document2.addElement("NewDataSet");
+                for (GoodsInfo info : mData) {
+                    Element cust2 = rootElement2.addElement("Cust");
+                    //物料代码
+                    cust2.addElement("FItemID").setText(info.getFitemid());
+                    //数量
+                    cust2.addElement("fauxqty").setText(info.getFqty());
+                    //子表innerid
+                    cust2.addElement("FInterID").setText(String.valueOf(info.getFinterid()));
+                }
+                OutputFormat outputFormat = OutputFormat.createPrettyPrint();
+                outputFormat.setSuppressDeclaration(false);
+                outputFormat.setNewlines(false);
+                StringWriter stringWriter = new StringWriter();
+                StringWriter stringWriter2 = new StringWriter();
+                // xmlWriter是用来把XML文档写入字符串的(工具)
+                XMLWriter xmlWriter = new XMLWriter(stringWriter, outputFormat);
+                XMLWriter xmlWriter2 = new XMLWriter(stringWriter2, outputFormat);
+                // 把创建好的XML文档写入字符串
+                xmlWriter.write(document);
+                xmlWriter2.write(document2);
+                String fbtouxml = stringWriter.toString().substring(38);
+                String fbtixml = stringWriter2.toString().substring(38);
+                Map<String, String> map = new HashMap<>();
+                map.put("FCheckerID", "1");
+                //                map.put("FBtiXML", "a");
+                map.put("FBtouXMl", fbtouxml);
+                map.put("FBtiXML", fbtixml);
+                String s = SoapUtil.requestWebService(Consts.CHECK, map);
+                return SoapUtil.requestWebService(Consts.CHECK, map);
+            } catch (Exception e) {
+                e.printStackTrace();
+                ToastUtils.showToast(getContext(), "创建参数据出错");
+                return null;
+            }
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            try {
-                if (s.contains("成功")) {
-                    ToastUtils.showToast(getContext(), "提交成功");
-                } else {
-                    ToastUtils.showToast(getContext(), "提交失败");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            if ("1".equals(s)) {
+                ToastUtils.showToast(getContext(), "提交成功");
+            } else {
                 ToastUtils.showToast(getContext(), "提交失败");
             }
-            ProgressDialogUtil.hideDialog();
         }
     }
 }

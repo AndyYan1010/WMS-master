@@ -28,6 +28,13 @@ public class GoodsInfo {
     private String fqty;
     private String fin;
     private String fout;
+    /**
+     * finterid : 1959
+     * fitemid : 2810
+     */
+
+    private String finterid;
+    private String fitemid;
 
     public String getFnumber() {
         return fnumber;
@@ -83,5 +90,21 @@ public class GoodsInfo {
 
     public void setFout(String fout) {
         this.fout = fout;
+    }
+
+    public String getFinterid() {
+        return finterid;
+    }
+
+    public void setFinterid(String finterid) {
+        this.finterid = finterid;
+    }
+
+    public String getFitemid() {
+        return fitemid;
+    }
+
+    public void setFitemid(String fitemid) {
+        this.fitemid = fitemid;
     }
 }

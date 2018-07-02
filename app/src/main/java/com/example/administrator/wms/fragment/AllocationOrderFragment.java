@@ -92,6 +92,7 @@ public class AllocationOrderFragment extends Fragment {
                 "left join t_icitem c on c.fitemid=b.fitemid left join t_stock d on d.fitemid=b.fdcstockid " +
                 "left join t_stock e on e.fitemid=b.fscstockid left join t_measureunit f on f.fitemid=b.funitid where ftrantype=41 and isnull(fcheckerid,0)=0 and isnull(FEntrySelfD0152,0)=0 and a.fbillno='" + mOrderID + "'";
         //查询单个调拨单详情
+        ProgressDialogUtil.startShow(getContext(), "正在加载");
         new ItemTask(detOrdUrl).execute();
     }
 
@@ -127,6 +128,7 @@ left join t_stock e on e.fitemid=b.fscstockid left join t_measureunit f on f.fit
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            ProgressDialogUtil.hideDialog();
             try {
                 Document doc = DocumentHelper.parseText(s);
                 Element ele = doc.getRootElement();

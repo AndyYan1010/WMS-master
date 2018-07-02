@@ -23,6 +23,7 @@ import com.example.administrator.wms.activity.AllocationDetailActivity;
 import com.example.administrator.wms.adapter.TransferAdapter;
 import com.example.administrator.wms.messageInfo.GoodsInfo;
 import com.example.administrator.wms.util.Consts;
+import com.example.administrator.wms.util.ProgressDialogUtil;
 import com.example.administrator.wms.util.SoapUtil;
 import com.example.administrator.wms.util.ToastUtils;
 import com.uuzuche.lib_zxing.activity.CaptureActivity;
@@ -153,6 +154,7 @@ public class TakeOrderFragment extends Fragment implements View.OnClickListener 
                 String detOrdUrl = "select c.fitemid,a.finterid,c.fnumber,c.fname,c.fmodel,f.fname,b.fqty,d.fname fin,e.fname fout from icstockbill a inner join icstockbillentry b on a.finterid=b.finterid " +
                         "left join t_icitem c on c.fitemid=b.fitemid left join t_stock d on d.fitemid=b.fdcstockid " +
                         "left join t_stock e on e.fitemid=b.fscstockid left join t_measureunit f on f.fitemid=b.funitid where ftrantype=41 and isnull(fcheckerid,0)=0 and isnull(FEntrySelfD0152,0)=0 and a.fbillno='" + orderID + "' and c.fnumber='" + "num" + "'";
+                ProgressDialogUtil.startShow(getContext(), "正在提交");
                 SubmitTask submitTask = new SubmitTask(mGoodsInfo);
                 submitTask.execute();
                 break;
@@ -337,8 +339,10 @@ public class TakeOrderFragment extends Fragment implements View.OnClickListener 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            ProgressDialogUtil.hideDialog();
             if ("1".equals(s)) {
                 ToastUtils.showToast(getContext(), "提交成功");
+                getActivity().finish();
             } else {
                 ToastUtils.showToast(getContext(), "提交失败");
             }
